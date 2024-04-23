@@ -1,9 +1,11 @@
 import cv2
 import numpy as np
 import mss
+import easyocr
 from flask import Flask, render_template, Response
 
 app = Flask(__name__)
+reader = easyocr.Reader(['ch_sim', 'en'])
 
 # 设置屏幕捕获的分辨率选项
 resolutions = {
@@ -52,5 +54,19 @@ def set_resolution(resolution):
     return "OK"
 
 
+@app.route('/ocr')
+def ocr():
+    # get screen
+    with mss.mss() as sct:
+        monitor = sct.monitors[0]
+        img = np.array(sct.grab(monitor))
+
+        # save image
+        cv2.imwrite('ocr.png', img)
+        result = reader.readtext('ocr.png', detail=0)
+        print(result)
+        return str(result)
+
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port=80)
