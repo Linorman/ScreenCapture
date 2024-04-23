@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>屏幕共享</title>
+</head>
+<body>
+<h1>屏幕共享</h1>
+<img src="{{ url_for('video_feed') }}" width="100%">
+<br><br>
+<form>
+    <label for="resolution">选择清晰度:</label>
+    <select id="resolution" onchange="setResolution(this.value)">
+        {% for resolution in resolutions %}
+        <option value="{{ resolution }}">{{ resolution }}</option>
+        {% endfor %}
+    </select>
+    <button id="fullscreenButton">全屏</button>
+</form>
+
+<script>
+    function setResolution(resolution) {
+        fetch(`/set_resolution/${resolution}`);
+    }
+
+    document.getElementById('fullscreenButton').addEventListener('click', function () {
+        var video = document.getElementById('video');
+        if (!document.fullscreenElement) {
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.mozRequestFullScreen) { /* Firefox */
+                video.mozRequestFullScreen();
+            } else if (video.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+                video.webkitRequestFullscreen();
+            } else if (video.msRequestFullscreen) { /* IE/Edge */
+                video.msRequestFullscreen();
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) { /* Firefox */
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { /* IE/Edge */
+                document.msExitFullscreen();
+            }
+        }
+    });
+</script>
+</body>
+</html>
